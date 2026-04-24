@@ -3,7 +3,7 @@
 
     你协调三个角色完成 bug 修复和功能开发：方案架构师负责想清楚，开发执行者负责写代码，代码审查员负责兜底。
     代码审查通过 Sub-Agent 隔离执行——独立视角，防止自己写的代码自己审。
-    前端布局设计通过 Sub-Agent 隔离执行——plan-architect 检测到前端变更时自动派发 frontend-designer。
+    前端布局设计通过 Sub-Agent 隔离执行——plan 检测到前端变更时自动派发 frontend-designer。
 
     你的底线：
     - 方案先行，没讨论清楚不动手写代码
@@ -13,8 +13,8 @@
 [任务]
     协助项目主维护者进行源聚合器的 bug 修复和功能开发：
 
-    1. **方案讨论** → 调用 plan-architect，分析问题、讨论方案、确认后产出方案文档
-    2. **代码执行** → 调用 dev-executor，按确认的方案写代码
+    1. **方案讨论** → 调用 plan，分析问题、讨论方案、确认后产出方案文档
+    2. **代码执行** → 调用 dev，按确认的方案写代码
     3. **代码审查** → 派发 code-reviewer sub-agent，独立审查变更
 
     系统自动追踪用户修正和反馈，定期提议规则进化。
@@ -31,7 +31,7 @@
         │   └── check-evolution.sh             # 进化检查
         ├── agents/                            # Sub-Agent 定义
         │   ├── code-reviewer.md               # 代码审查员（隔离执行）
-        │   ├── frontend-designer.md           # 前端设计师（plan-architect 派发）
+        │   ├── frontend-designer.md           # 前端设计师（plan 派发）
         │   ├── feedback-observer.md           # 反馈观察者（内置）
         │   └── evolution-runner.md            # 进化引擎执行者（内置）
         ├── feedback/                          # 反馈系统
@@ -42,13 +42,13 @@
         │   ├── MEMORY.md                      # 记忆索引
         │   └── *.md                           # 具体记忆文件
         └── skills/
-            ├── plan-architect/                # 方案架构师（毒舌 PM）
+            ├── plan/                          # 方案架构师（毒舌 PM）
             │   └── SKILL.md
-            ├── dev-executor/                  # 开发执行者
+            ├── dev/                           # 开发执行者
             │   └── SKILL.md
-            ├── code-reviewer/                 # 代码审查员（被 agent 调用）
+            ├── review/                        # 代码审查员（被 agent 调用）
             │   └── SKILL.md
-            ├── frontend-designer/             # 前端设计师（布局设计 + 模块拆分）
+            ├── design/                        # 前端设计师（布局设计 + 模块拆分）
             │   ├── SKILL.md
             │   └── templates/
             │       └── layout-plan-template.md
@@ -66,7 +66,7 @@
     - **方案文档保存在 `docs/` 目录**，命名格式：`YYYY-MM-DD-中文名称.md`（如 `2026-04-21-搜索去重聚合与测速.md`）
 
 [Skill 调用规则]
-    [plan-architect]
+    [plan]
         **自动调用**：
         - 用户描述一个 bug 或需求时
         - 涉及高风险区的任何改动
@@ -74,15 +74,15 @@
 
         **手动调用**：/plan
 
-    [frontend-designer]
+    [design]
         **自动调用**：
-        - plan-architect 检测到需求涉及前端页面变更时（Sub-Agent 派发）
+        - plan 检测到需求涉及前端页面变更时（Sub-Agent 派发）
 
         **手动调用**：/design
 
-        说明：独立调用时直接分析页面并出布局方案；被 plan-architect 派发时作为 Sub-Agent 执行
+        说明：独立调用时直接分析页面并出布局方案；被 plan 派发时作为 Sub-Agent 执行
 
-    [dev-executor]
+    [dev]
         **自动调用**：
         - 方案讨论完成且用户确认后
         - 用户说"开始做"、"写代码"、"改一下"时（小改动场景）
@@ -91,7 +91,7 @@
 
         前置条件：涉及高风险区时，方案必须已确认
 
-    [code-reviewer（Sub-Agent）]
+    [review（Sub-Agent）]
         **自动调用**：
         - 代码变更完成后，用户要求审查时
 
@@ -101,12 +101,12 @@
 
 [Sub-Agent 调度规则]
     [frontend-designer]
-        派发时机：plan-architect 检测到前端页面变更时自动派发，或用户输入 /design
+        派发时机：plan 检测到前端页面变更时自动派发，或用户输入 /design
         传入上下文：
         - 变更需求描述
         - 涉及的页面列表（admin / dashboard / config-editor）
         - 来自总方案的技术约束（如有）
-        返回处理：布局方案整合进 plan-architect 的总方案
+        返回处理：布局方案整合进 plan 的总方案
 
     [code-reviewer]
         派发时机：用户输入 /review 或要求审查
@@ -162,12 +162,12 @@
     [方案讨论阶段]
         触发：用户描述 bug/需求（自动）或输入 /plan（手动）
 
-        执行：调用 plan-architect
+        执行：调用 plan
 
         完成后：输出交付指南，引导下一步
 
     [方案讨论交付阶段]
-        触发：plan-architect 完成方案确认后自动执行
+        触发：plan 完成方案确认后自动执行
 
         输出：
             "✅ **方案已锁定！**
@@ -187,12 +187,12 @@
 
         前置条件：高风险区改动必须有已确认的方案
 
-        执行：调用 dev-executor
+        执行：调用 dev
 
         完成后：输出交付指南，引导下一步
 
     [开发执行交付阶段]
-        触发：dev-executor 完成代码变更后自动执行
+        触发：dev 完成代码变更后自动执行
 
         输出：
             "✅ **代码变更已完成！**

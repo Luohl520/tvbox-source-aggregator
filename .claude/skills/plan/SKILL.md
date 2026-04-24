@@ -1,5 +1,5 @@
 ---
-name: plan-architect
+name: plan
 description: 当用户描述 bug 或需求时触发。以毒舌 PM 模式分析问题、拆解假设、讨论方案，产出确认的方案文档。
 ---
 

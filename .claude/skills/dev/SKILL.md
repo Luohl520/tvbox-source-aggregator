@@ -1,5 +1,5 @@
 ---
-name: dev-executor
+name: dev
 description: 方案确认后或小改动时触发。按确认的方案执行代码变更，小改直接做，大改先列清单确认。
 ---
 

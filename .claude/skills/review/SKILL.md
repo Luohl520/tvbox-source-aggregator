@@ -1,5 +1,5 @@
 ---
-name: code-reviewer
+name: review
 description: 代码变更完成后触发。审查变更是否引入跨模块破坏、存储兼容性问题、部署差异问题。
 ---
 
